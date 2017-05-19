@@ -3,7 +3,7 @@ addons:
   apt:
     packages:
     - libncurses-dev
-    - linux-headers-3.13.0-40-generic
+    - linux-headers-$(uname -r)
 
 cache:
   directories:
@@ -15,12 +15,16 @@ before_install:
     cd $HOME/dpdk &&
     wget http://fast.dpdk.org/rel/dpdk-16.11.1.tar.xz &&
     tar --strip-components=1 -axvf dpdk-16.11.1.tar.xz &&
-    export RTE_KERNELDIR=/lib/modules/3.13.0-40-generic/build &&
+    export RTE_KERNELDIR="/lib/modules/$(uname -r)/build" &&
+    echo $RTE_KERNELDIR &&
     make install T=x86_64-native-linuxapp-gcc; true
 
 script:
   - cd $TRAVIS_BUILD_DIR
   - export RTE_SDK=$HOME/dpdk
   - export RTE_TARGET=x86_64-native-linuxapp-gcc
+  - echo $RTE_SDK
+  - echo $RTE_TARGET
+  - ls $HOME/dpdk
   - make
 
